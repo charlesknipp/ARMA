@@ -45,7 +45,8 @@ function SSMProblems.distribution(
         proc::LinearGaussianLatentDynamics{T},
         extra
     ) where {T<:Real}
-        dx = size(proc.A, 1)
+    # initial variance for non-stationary components is set arbitrarily high
+    dx = size(proc.A, 1)
     return MvNormal(zeros(T, dx), init_cov(proc, convert(T, 1000)))
 end
 
@@ -84,13 +85,13 @@ PDMats.PDMat(mat::AbstractMatrix) = begin
     PDMat(mat, Cholesky(Up))
 end
 
-function init_cov(dyn::LinearGaussianLatentDynamics{T}, σ::T) where {T<:Real}
+function init_cov(dyn::LinearGaussianLatentDynamics{T}, σ²::T) where {T<:Real}
     # compute the eigenvalues without permuting the matrix
     λ   = eigvals(dyn.A, permute=false, sortby=nothing)
     idx = isless.(norm.(λ, 2), 1.0)
 
     # fill all non-stationary component diagonals with σ
-    Σ0 = diagm(convert(T, σ)*ones(size(dyn.A, 1)))
+    Σ0 = diagm(convert(T, σ²)*ones(size(dyn.A, 1)))
     Σ0[idx, idx] = lyapd(dyn.A[idx, idx], dyn.Q[idx, idx])
 
     return Σ0
