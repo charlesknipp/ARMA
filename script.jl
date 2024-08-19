@@ -1,4 +1,4 @@
-include("ARMA.jl")
+include("arma.jl")
 using CSV, DataFrames
 
 ## MORELY-NELSON-ZIVOT REPLICATION ############################################

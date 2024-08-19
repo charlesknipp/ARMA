@@ -1,5 +1,7 @@
 using FFTW
 
+import SSMProblems: StateSpaceModel, logdensity
+
 include("linear-model.jl")
 include("filters.jl")
 
