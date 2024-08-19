@@ -30,21 +30,27 @@ struct ARMA{T<:Real, p, q} <: LatentDynamics
     end
 end
 
-# defined according to Hamilton's state space form (subject to change)
-function SSMProblems.StateSpaceModel(proc::ARMA{T, p, q}) where {T<:Real, p, q}
+# defined according to Harvey's state space form
+function LinearGaussianLatentDynamics(proc::ARMA{T, p, q}) where {T<:Real, p, q}
     d = max(p, q+1)
 
     φ = cat(proc.φ, zeros(T, d-p), dims=1)
     θ = cat(proc.θ, zeros(T, d-1-q), dims=1)
 
-    dyn = LinearGaussianLatentDynamics(
-        vcat(φ[1:d]', diagm(d-1, d, ones(d-1))),
-        diagm(d, d, T[proc.σ^2]),
+    ma_poly = T[1 θ[1:d-1]'...]
+    return LinearGaussianLatentDynamics(
+        Matrix(vcat(φ[1:d]', diagm(d-1, d, ones(d-1)))'),
+        ma_poly'*diagm(T[proc.σ^2])*ma_poly,
         zeros(T, d)
     )
+end
 
+function StateSpaceModel(proc::ARMA{T}) where {T<:Real}
+    dyn = LinearGaussianLatentDynamics(proc)
+
+    d = size(dyn.A, 1)
     obs = LinearGaussianObservationProcess(
-        T[1 θ[1:d-1]'...],
+        T[1 zeros(T, d-1)...],
         T[0.0;;]
     )
 
