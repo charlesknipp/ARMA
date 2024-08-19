@@ -1,7 +1,8 @@
 using Random
-import AbstractMCMC: AbstractSampler
 using UnPack
 using SSMProblems
+
+import AbstractMCMC: AbstractSampler
 
 abstract type AbstractFilter <: AbstractSampler end
 

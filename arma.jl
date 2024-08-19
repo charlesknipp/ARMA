@@ -1,5 +1,4 @@
 using FFTW
-import SSMProblems: logdensity, StateSpaceModel
 
 include("linear-model.jl")
 include("filters.jl")
@@ -17,8 +16,8 @@ struct ARMA{T<:Real, p, q} <: LatentDynamics
     """
         ARMA(p,q) models are defined for autoregressive polynomials φ, of order
         p, and moving-average polynomials θ, of order q. The model is defined
-        by the following equation:
-        φy[t] = θε[t],  ε[t] ∼ N(0, σ²)
+        by the following equation given the data y:
+        φ(L)y[t] = θ(L)ε[t],  ε[t] ∼ N(0, σ²)
     """
     φ::Vector{T}
     θ::Vector{T}
@@ -30,7 +29,7 @@ struct ARMA{T<:Real, p, q} <: LatentDynamics
 end
 
 # defined according to Hamilton's state space form (subject to change)
-function StateSpaceModel(proc::ARMA{T, p, q}) where {T<:Real, p, q}
+function SSMProblems.StateSpaceModel(proc::ARMA{T, p, q}) where {T<:Real, p, q}
     d = max(p, q+1)
 
     φ = cat(proc.φ, zeros(T, d-p), dims=1)
@@ -125,7 +124,7 @@ function acov(proc::ARMA{MT}, T::Integer; order::Integer=16) where {MT<:Real}
     return Matrix(Hermitian(UpperTriangular(Γ), :U))
 end
 
-function logdensity(
+function SSMProblems.logdensity(
         proc::ARMA{T},
         data::AbstractVector{T};
         kwargs...
@@ -133,7 +132,7 @@ function logdensity(
     # get the approximate conditional covariance
     Γ = acov(proc, length(data); kwargs...)
 
-    # calculate and return  the log likelihood
+    # calculate and return the log likelihood
     logℓ = data'inv(Γ)*data
     logℓ += length(data)*log(2π) + logdet(Γ)
     return -0.5*logℓ
