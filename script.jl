@@ -48,4 +48,4 @@ mnz_model = morely_nelson_zivot(
 # estimate with sequence space and Kalman filter
 _, ssm_loglike = sample(rng, arma_model, demeaned_data, KF())
 arma_loglike   = logdensity(mnz_arma, demeaned_data)
-_, uc0_loglike = sample(rng, mnz_model, 100*mnz_data.gdp, KF())
+_, uc0_loglike = sample(rng, mnz_model, mnz_data, KF())

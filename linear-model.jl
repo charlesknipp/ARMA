@@ -7,7 +7,7 @@ using MatrixEquations
 using GaussianDistributions
 using Distributions
 
-struct LinearGaussianLatentDynamics{T<:Real} <: LatentDynamics
+struct LinearGaussianLatentDynamics{T} <: LatentDynamics{T}
     """
         Latent dynamics for a linear Gaussian state space model.
         The model is defined by the following equation:
@@ -27,7 +27,7 @@ function LinearGaussianLatentDynamics(A::Matrix, Q::Matrix, μ::Vector)
     return LinearGaussianLatentDynamics(A, PDMat(Q), μ)
 end
 
-struct LinearGaussianObservationProcess{T<:Real} <: ObservationProcess
+struct LinearGaussianObservationProcess{T} <: ObservationProcess{T}
     """
         Observation process for a linear Gaussian state space model.
         The model is defined by the following equation:
@@ -37,8 +37,8 @@ struct LinearGaussianObservationProcess{T<:Real} <: ObservationProcess
     R::PDMat{T, Matrix{T}}
 end
 
-function LinearGaussianObservationProcess(H::Matrix, R::Matrix)
-    return LinearGaussianObservationProcess(H, PDMat(R))
+function LinearGaussianObservationProcess(H::Matrix{T}, R::Matrix{T}) where {T<:Real}
+    return LinearGaussianObservationProcess{T}(H, PDMat(R))
 end
 
 function SSMProblems.distribution(
@@ -68,13 +68,11 @@ function SSMProblems.distribution(
     return MvNormal(proc.H*state, proc.R)
 end
 
-const LinearGaussianModel{T<:Real} = StateSpaceModel{
-    LinearGaussianLatentDynamics{T},
-    LinearGaussianObservationProcess{T}
+const LinearGaussianModel{T} = StateSpaceModel{D, O} where {
+    T,
+    D <: LinearGaussianLatentDynamics{T},
+    O <: LinearGaussianObservationProcess{T}
 }
-
-Base.eltype(::LinearGaussianModel{T}) where T = T
-Base.eltype(::StateSpaceModel) = error("model element type must be explicit")
 
 ## UTILITIES ##################################################################
 

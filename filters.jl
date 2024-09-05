@@ -33,10 +33,9 @@ function sample(
         observations::AbstractVector,
         filter::AbstractFilter
     )
-    MT = eltype(model)
     
     filtered_states = prior(rng, model, filter, nothing)
-    log_evidence = zero(MT)
+    log_evidence = zero(eltype(model.dyn))
 
     for t in eachindex(observations)
         proposed_states = predict(

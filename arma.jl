@@ -14,7 +14,7 @@ include("filters.jl")
     ARMA(p,q) to produce a different StateSpaceModel
 =#
 
-struct ARMA{T<:Real, p, q} <: LatentDynamics
+struct ARMA{T, p, q} <: LatentDynamics{T}
     """
         ARMA(p,q) models are defined for autoregressive polynomials φ, of order
         p, and moving-average polynomials θ, of order q. The model is defined
@@ -31,7 +31,7 @@ struct ARMA{T<:Real, p, q} <: LatentDynamics
 end
 
 # defined according to Hamilton's state space form (subject to change)
-function SSMProblems.StateSpaceModel(proc::ARMA{T, p, q}) where {T<:Real, p, q}
+function StateSpaceModel(proc::ARMA{T, p, q}) where {T<:Real, p, q}
     d = max(p, q+1)
 
     φ = cat(proc.φ, zeros(T, d-p), dims=1)
@@ -49,7 +49,7 @@ function SSMProblems.StateSpaceModel(proc::ARMA{T, p, q}) where {T<:Real, p, q}
     )
 
     # returns a linear Gaussian state space model
-    return StateSpaceModel(dyn, obs)
+    return SSMProblems.StateSpaceModel(dyn, obs)
 end
 
 function Base.show(io::IO, proc::ARMA{T, p, q}) where {T<:Real, p, q}
@@ -103,7 +103,7 @@ function spectral_density(proc::ARMA; res=1200)
     ωs = range(0, stop=2π, length=res)
     hz = frequency_response(proc, ωs)
     spect = @. (proc.σ^2) * hz
-    return ws, spect
+    return ωs, spect
 end
 
 function acov(proc::ARMA{MT}, T::Integer; order::Integer=16) where {MT<:Real}
