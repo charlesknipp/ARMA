@@ -1,4 +1,4 @@
-include("arma.jl")
+using ARMAModels
 using CSV, DataFrames
 
 ## MORELY-NELSON-ZIVOT REPLICATION ############################################

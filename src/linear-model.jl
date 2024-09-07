@@ -1,12 +1,3 @@
-using SSMProblems
-
-using LinearAlgebra
-using PDMats
-using MatrixEquations
-
-using GaussianDistributions
-using Distributions
-
 struct LinearGaussianLatentDynamics{T} <: LatentDynamics{T}
     """
         Latent dynamics for a linear Gaussian state space model.

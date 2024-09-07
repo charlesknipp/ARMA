@@ -1,0 +1,25 @@
+name = "ARMAModels"
+uuid = "b2c62c39-b30c-4835-9571-3c98b5fc1bb0"
+authors = ["Charles Knipp <charles.a.knipp@frb.gov>"]
+version = "0.1.0"
+
+[deps]
+AbstractMCMC = "80f14c24-f653-4e6a-9b94-39d6b0f70001"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
+GaussianDistributions = "43dcc890-d446-5863-8d1a-14597580bb8d"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+MatrixEquations = "99c1a7ee-ab34-5fd5-8076-27c950a045f4"
+PDMats = "90014a1f-27ba-587c-ab20-58faa44d9150"
+Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SSMProblems = "26aad666-b158-4e64-9d35-0e672562fa48"
+ToeplitzMatrices = "c751599d-da0a-543b-9d20-d0a503d91d24"
+UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
+
+[extras]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
