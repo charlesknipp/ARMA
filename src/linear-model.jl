@@ -11,11 +11,11 @@ end
 
 function LinearGaussianLatentDynamics(A::Matrix, Q::Matrix)
     μ = zeros(eltype(A), size(A, 1))
-    return LinearGaussianLatentDynamics(A, PDMat(Q), μ)
+    return LinearGaussianLatentDynamics(A, PSDMat(Q), μ)
 end
 
 function LinearGaussianLatentDynamics(A::Matrix, Q::Matrix, μ::Vector)
-    return LinearGaussianLatentDynamics(A, PDMat(Q), μ)
+    return LinearGaussianLatentDynamics(A, PSDMat(Q), μ)
 end
 
 struct LinearGaussianObservationProcess{T} <: ObservationProcess{T}
@@ -29,7 +29,7 @@ struct LinearGaussianObservationProcess{T} <: ObservationProcess{T}
 end
 
 function LinearGaussianObservationProcess(H::Matrix{T}, R::Matrix{T}) where {T<:Real}
-    return LinearGaussianObservationProcess{T}(H, PDMat(R))
+    return LinearGaussianObservationProcess{T}(H, PSDMat(R))
 end
 
 function SSMProblems.distribution(
@@ -67,7 +67,7 @@ const LinearGaussianModel{T} = StateSpaceModel{D, O} where {
 
 ## UTILITIES ##################################################################
 
-PDMats.PDMat(mat::AbstractMatrix) = begin
+function PSDMat(mat::AbstractMatrix)
     # this deals with rank definicient positive semi-definite matrices
     chol_mat = cholesky(mat, Val(true), check=false)
     Up = UpperTriangular(chol_mat.U[:, invperm(chol_mat.p)])
