@@ -170,23 +170,9 @@ end
 function empirical_autocovariance(
         proc::ARMA{MT}, T::Integer; order::Integer=16
     ) where {MT<:Real}
-    Γ = zeros(MT, T, T)
-    
-    γ = begin
-        _, spect = spectral_density(proc; res = max(1200, 2*order))
-        acov = real(ifft(spect))
-        acov[1:order]
-    end
-
-    for k in 1:T
-        if k ≤ T-order
-            Γ[k,k:(k+order-1)] = γ
-        else
-            Γ[k, k:end] = γ[1:(T-k+1)]
-        end
-    end
-
-    return Matrix(Hermitian(UpperTriangular(Γ), :U))
+    _, spect = spectral_density(proc; res = max(1200, 2*order))
+    γ = real(ifft(spect))
+    return γ[1:T]
 end
 
 ## MATRIX REPRESENTATION FOR MLE ##############################################
